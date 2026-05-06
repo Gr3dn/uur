@@ -1,4 +1,4 @@
-import { Alert, Box, Snackbar } from '@mui/material';
+import { Alert, Box, Drawer, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AboutDialog } from './components/AboutDialog';
@@ -13,6 +13,7 @@ const App = () => {
   const { t } = useTranslation();
   const { state, actions } = useTransitStore();
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [routesOpen, setRoutesOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const showMessage = (key: string) => {
@@ -35,6 +36,12 @@ const App = () => {
     showMessage('storage.reset');
   };
 
+  const routeSidebar = (
+    <Box className="mobile-route-content">
+      <RouteTree />
+    </Box>
+  );
+
   return (
     <Box className="app-shell">
       <AppHeader
@@ -46,6 +53,7 @@ const App = () => {
         onLoadState={handleLoadState}
         onResetMock={handleResetMock}
         onOpenAbout={() => setAboutOpen(true)}
+        onOpenRoutes={() => setRoutesOpen(true)}
       />
 
       <Box className="dashboard-grid">
@@ -62,6 +70,15 @@ const App = () => {
           </Box>
         </Box>
       </Box>
+
+      <Drawer
+        open={routesOpen}
+        onClose={() => setRoutesOpen(false)}
+        ModalProps={{ keepMounted: true }}
+        PaperProps={{ className: 'mobile-route-drawer-paper' }}
+      >
+        {routeSidebar}
+      </Drawer>
 
       <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
 

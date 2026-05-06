@@ -9,6 +9,8 @@ export interface Stop {
   name: string;
   order: number;
   distanceKm: number;
+  mapX: number;
+  mapY: number;
   platformCode: string;
 }
 

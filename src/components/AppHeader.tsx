@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Chip,
+  IconButton,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
@@ -14,6 +15,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import { useTranslation } from 'react-i18next';
 import type { MouseEvent } from 'react';
 import type { AppMode, Language } from '../types/transport';
@@ -27,6 +29,7 @@ interface AppHeaderProps {
   onLoadState: () => void;
   onResetMock: () => void;
   onOpenAbout: () => void;
+  onOpenRoutes: () => void;
 }
 
 export const AppHeader = ({
@@ -38,6 +41,7 @@ export const AppHeader = ({
   onLoadState,
   onResetMock,
   onOpenAbout,
+  onOpenRoutes,
 }: AppHeaderProps) => {
   const { t } = useTranslation();
 
@@ -51,17 +55,28 @@ export const AppHeader = ({
   return (
     <AppBar position="static" color="transparent" elevation={0} className="app-header">
       <Toolbar className="app-toolbar">
-        <Stack spacing={0.5} className="header-brand">
-          <Typography variant="h5" component="h1">
-            {t('app.title')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('app.subtitle')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('header.author')}
-          </Typography>
-        </Stack>
+        <Box className="header-primary">
+          <IconButton
+            className="mobile-route-button"
+            color="primary"
+            aria-label={t('header.routes')}
+            onClick={onOpenRoutes}
+          >
+            <MenuRoundedIcon />
+          </IconButton>
+
+          <Stack spacing={0.5} className="header-brand">
+            <Typography variant="h5" component="h1">
+              {t('app.title')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('app.subtitle')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('header.author')}
+            </Typography>
+          </Stack>
+        </Box>
 
         <Box className="header-controls">
           <Chip

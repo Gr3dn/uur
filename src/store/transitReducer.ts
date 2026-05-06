@@ -43,7 +43,7 @@ export const createDefaultState = (): TransitState => {
     mode: 'planning',
     isPlaying: false,
     currentTimeMinutes: 360,
-    language: 'en',
+    language: 'cs',
     validationError: null,
   };
 

@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Stack } from '@mui/material';
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 interface AboutDialogProps {
@@ -15,8 +15,14 @@ export const AboutDialog = ({ open, onClose }: AboutDialogProps) => {
       <DialogContent dividers>
         <Stack spacing={2}>
           <Typography>{t('about.description')}</Typography>
+          <Typography>{t('about.purpose')}</Typography>
           <Typography>{t('about.stack')}</Typography>
-          <Typography>{t('about.observer')}</Typography>
+          <Typography>{t('about.criteria')}</Typography>
+          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+            <Chip size="small" variant="outlined" label={`${t('about.authorLabel')}: Hrechishkin`} />
+            <Chip size="small" variant="outlined" label={`${t('about.personalNumberLabel')}: A23B0394P`} />
+            <Chip size="small" variant="outlined" color="secondary" label={t('about.courseLabel')} />
+          </Stack>
         </Stack>
       </DialogContent>
       <DialogActions>

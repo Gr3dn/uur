@@ -1,28 +1,64 @@
-import { Paper, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Chip, Paper, Stack, Typography } from '@mui/material';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import TramIcon from '@mui/icons-material/Tram';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransitStore } from '../store/TransitStoreContext';
-import { getSelectedDirection, getTimelineEntries } from '../store/transitSelectors';
+import { getSelectedDirection, getSelectedLine, getTimelineEntries, getStatusTone } from '../store/transitSelectors';
+import type { Stop } from '../types/transport';
+import { formatClock } from '../utils/time';
 
-const ROUTE_WIDTH = 980;
-const ROUTE_HEIGHT = 260;
-const MAP_PADDING = 60;
+type MarkerPoint = {
+  x: number;
+  y: number;
+};
 
-const statusColorMap: Record<string, string> = {
-  onTime: '#2E7D32',
-  delayed: '#F57C00',
-  cancelled: '#6D6D6D',
-  accident: '#D32F2F',
+const clamp = (value: number, min: number, max: number): number => Math.max(min, Math.min(max, value));
+
+const getMarkerPoint = (stops: Stop[], progress: number): MarkerPoint => {
+  if (!stops.length) {
+    return { x: 0, y: 0 };
+  }
+
+  if (stops.length === 1) {
+    return { x: stops[0].mapX, y: stops[0].mapY };
+  }
+
+  const maxDistance = stops[stops.length - 1].distanceKm || 1;
+  const targetDistance = clamp(progress, 0, 1) * maxDistance;
+
+  for (let index = 0; index < stops.length - 1; index += 1) {
+    const currentStop = stops[index];
+    const nextStop = stops[index + 1];
+
+    if (targetDistance > nextStop.distanceKm && index < stops.length - 2) {
+      continue;
+    }
+
+    const segmentDistance = nextStop.distanceKm - currentStop.distanceKm || 1;
+    const segmentProgress = clamp((targetDistance - currentStop.distanceKm) / segmentDistance, 0, 1);
+
+    return {
+      x: currentStop.mapX + (nextStop.mapX - currentStop.mapX) * segmentProgress,
+      y: currentStop.mapY + (nextStop.mapY - currentStop.mapY) * segmentProgress,
+    };
+  }
+
+  const lastStop = stops[stops.length - 1];
+  return { x: lastStop.mapX, y: lastStop.mapY };
 };
 
 export const TimelineMap = () => {
   const { t } = useTranslation();
-  const { state } = useTransitStore();
+  const { state, actions } = useTransitStore();
 
+  const selectedLine = useMemo(() => getSelectedLine(state), [state]);
   const selectedDirection = useMemo(() => getSelectedDirection(state), [state]);
   const entries = useMemo(() => getTimelineEntries(state), [state]);
 
-  if (!selectedDirection) {
+  if (!selectedDirection || !selectedLine) {
     return (
       <Paper className="panel panel-map" elevation={0}>
         <Typography>{t('map.noDirection')}</Typography>
@@ -30,80 +66,105 @@ export const TimelineMap = () => {
     );
   }
 
-  const maxDistance = selectedDirection.stops[selectedDirection.stops.length - 1]?.distanceKm || 1;
-  const lineY = 86;
-
-  const distanceToX = (distanceKm: number): number => {
-    const ratio = maxDistance === 0 ? 0 : distanceKm / maxDistance;
-    return MAP_PADDING + ratio * (ROUTE_WIDTH - MAP_PADDING * 2);
-  };
+  const polylinePoints = selectedDirection.stops.map((stop) => `${stop.mapX},${stop.mapY}`).join(' ');
 
   return (
     <Paper className="panel panel-map" elevation={0}>
       <Stack spacing={1.5} sx={{ height: '100%' }}>
-        <Typography variant="h6">{t('map.title')}</Typography>
+        <Box className="map-header">
+          <Box>
+            <Typography variant="h6">{t('map.title')}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {selectedLine.code} / {selectedDirection.terminalFrom} {'->'} {selectedDirection.terminalTo}
+            </Typography>
+          </Box>
 
-        <svg viewBox={`0 0 ${ROUTE_WIDTH} ${ROUTE_HEIGHT}`} className="timeline-map" role="img" aria-label={t('map.title')}>
-          <defs>
-            <linearGradient id="routeGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#004D40" />
-              <stop offset="50%" stopColor="#00796B" />
-              <stop offset="100%" stopColor="#26A69A" />
-            </linearGradient>
-          </defs>
+          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" className="map-header-actions">
+            <Chip label={`${t('map.clock')}: ${formatClock(state.currentTimeMinutes)}`} color="primary" variant="outlined" />
+            <Chip
+              label={state.mode === 'planning' ? t('modes.planning') : t('modes.live')}
+              color={state.mode === 'planning' ? 'default' : 'secondary'}
+              variant="outlined"
+            />
+            <Button
+              size="small"
+              variant={state.isPlaying ? 'contained' : 'outlined'}
+              startIcon={state.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+              onClick={actions.togglePlay}
+              disabled={state.mode !== 'live'}
+            >
+              {state.isPlaying ? t('grid.pause') : t('grid.play')}
+            </Button>
+          </Stack>
+        </Box>
 
-          <line
-            x1={MAP_PADDING}
-            y1={lineY}
-            x2={ROUTE_WIDTH - MAP_PADDING}
-            y2={lineY}
-            stroke="url(#routeGradient)"
-            strokeWidth="12"
-            strokeLinecap="round"
-          />
+        {state.mode !== 'live' && <Alert severity="info">{t('map.liveHint')}</Alert>}
 
-          {selectedDirection.stops.map((stop) => {
-            const x = distanceToX(stop.distanceKm);
+        <Box className="route-map-canvas">
+          <svg className="route-map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={t('map.title')}>
+            <polyline
+              points={polylinePoints}
+              className="route-map-polyline"
+              style={{ stroke: selectedLine.color }}
+            />
+          </svg>
+
+          {selectedDirection.stops.map((stop) => (
+            <Box
+              key={stop.id}
+              className="route-map-stop"
+              style={{
+                left: `${stop.mapX}%`,
+                top: `${stop.mapY}%`,
+              }}
+            >
+              <Box className="route-map-stop-dot" style={{ borderColor: selectedLine.color }} />
+              <Typography variant="caption" className="route-map-stop-label">
+                {stop.name}
+              </Typography>
+              <Typography variant="caption" className="route-map-stop-platform">
+                {stop.platformCode}
+              </Typography>
+            </Box>
+          ))}
+
+          {entries.map((entry) => {
+            const point = getMarkerPoint(selectedDirection.stops, entry.progress);
+            const markerClass =
+              entry.schedule.status === 'accident'
+                ? 'route-map-tram route-map-tram-accident'
+                : `route-map-tram route-map-tram-${entry.schedule.status}`;
+
             return (
-              <g key={stop.id}>
-                <circle cx={x} cy={lineY} r={9} fill="#ffffff" stroke="#00796B" strokeWidth={4} />
-                <text x={x} y={lineY + 30} textAnchor="middle" className="stop-label">
-                  {stop.name}
-                </text>
-                <text x={x} y={lineY + 48} textAnchor="middle" className="stop-sub-label">
-                  {stop.platformCode}
-                </text>
-              </g>
+              <Box
+                key={entry.schedule.id}
+                className={markerClass}
+                style={{
+                  left: `${point.x}%`,
+                  top: `${point.y}%`,
+                  opacity: entry.isInService ? 1 : 0.55,
+                }}
+                title={`${entry.tram?.fleetNumber ?? entry.schedule.tramId} - ${t(`status.${entry.schedule.status}`)}`}
+              >
+                {entry.schedule.status === 'accident' ? (
+                  <WarningAmberIcon fontSize="inherit" className="route-map-tram-alert-icon" />
+                ) : (
+                  <TramIcon fontSize="inherit" className="route-map-tram-icon" />
+                )}
+                <Typography variant="caption" className="route-map-tram-label">
+                  {entry.tram?.fleetNumber ?? entry.schedule.tramId}
+                </Typography>
+              </Box>
             );
           })}
+        </Box>
 
-          {
-            // Reactive binding: whenever table/tree changes schedule status or route selection,
-            // these markers re-render from global store without direct component coupling.
-            entries.map((entry, index) => {
-              const x = distanceToX(entry.progress * maxDistance);
-              const y = 150 + index * 28;
-              const baseClass =
-                entry.schedule.status === 'accident' ? 'tram-marker tram-accident' : 'tram-marker';
-
-              return (
-                <g key={entry.schedule.id} className={baseClass}>
-                  <line x1={x} y1={lineY + 10} x2={x} y2={y - 10} stroke="#A0B8B6" strokeDasharray="4 3" />
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={10}
-                    fill={statusColorMap[entry.schedule.status]}
-                    opacity={entry.isInService ? 1 : 0.65}
-                  />
-                  <text x={x + 16} y={y + 4} className="tram-label">
-                    {entry.tram?.fleetNumber ?? entry.schedule.tramId}
-                  </text>
-                </g>
-              );
-            })
-          }
-        </svg>
+        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+          <Chip size="small" color={getStatusTone('onTime')} label={t('status.onTime')} />
+          <Chip size="small" color={getStatusTone('delayed')} label={t('status.delayed')} />
+          <Chip size="small" color={getStatusTone('cancelled')} label={t('status.cancelled')} />
+          <Chip size="small" color={getStatusTone('accident')} label={t('status.accident')} />
+        </Stack>
       </Stack>
     </Paper>
   );

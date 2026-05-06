@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# Interaktivni dispecer tramvajove dopravy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Autor: Hrechishkin  
+Osobni cislo: A23B0394P
 
-Currently, two official plugins are available:
+## Ucel aplikace
+Tato aplikace je semestralni projekt zamereny na netrivialni GUI. Simuluje praci jednoducheho tramvajoveho dispecera, ktery:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- vybere linku a smer ve stromove navigaci,
+- upravuje spoje v editovatelne tabulce,
+- sleduje stav tramvaji ve vlastni vykreslovane mape,
+- uklada a nacita rozpracovany stav z `LocalStorage`.
 
-## React Compiler
+Projekt je zamerne postaven jako studentska desktop-like web aplikace s mock daty a bez backendu. Cilem neni hotovy provozni system, ale kvalitni demonstrace GUI, validace vstupu a synchronizace vice pohledu nad jednou datovou sadou.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Hlavni workflow
+Zakladni workflow aplikace je:
 
-## Expanding the ESLint configuration
+1. Uzivatel vybere linku nebo smer v `Tree View`.
+2. Tabulka `Data Grid` se automaticky prefiltruje na vybranou trasu.
+3. Uzivatel muze pridat, upravit nebo smazat spoj.
+4. Zmena stavu nebo zpozdeni se okamzite projevi na mape.
+5. V rezimu `Live monitoring` lze spustit simulovany cas a sledovat pohyb tramvaji po trase.
+6. Stav je mozne ulozit a pozdeji obnovit.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Pouzite technologie
+- React + TypeScript
+- MUI
+- MUI X Data Grid
+- MUI X Tree View
+- vlastni CSS soubory
+- `i18next` pro EN/CS prepinani
+- `LocalStorage` pro ukladani stavu
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Spusteni projektu
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Produkci build:
+```bash
+npm run build
 ```
+
+Kontrola kodu:
+```bash
+npm run lint
+```
+
+## Struktura reseni
+- `src/components/RouteTree.tsx` - hierarchicka navigace linek, smeru a zastavek
+- `src/components/ScheduleGrid.tsx` - editovatelna tabulka spoju s validaci
+- `src/components/TimelineMap.tsx` - vlastni vykreslovana mapa trasy s pohybem tramvaji
+- `src/store/TransitStoreContext.tsx` - centralni store a observer-like synchronizace UI
+- `src/store/transitReducer.ts` - logika zmen stavu
+- `src/data/mockData.ts` - mock data pro dve linky
+- `src/store/storage.ts` - ukladani a nacteni stavu
+- `src/i18n/resources.ts` - preklady
+- `src/styles/*.css` - oddelene styly aplikace
+
+## Splnene body zadani
+- netrivialni GUI s jednim ucelenym pracovnim celkem
+- `Data Grid`
+- `Tree View`
+- vlastni vykreslovana komponenta mapy
+- vice pohledu nad jednou datovou sadou
+- hierarchicka navigace
+- dva rezimy prace: planovani a live monitoring
+- prubezna zpetna vazba pres barevne stavy, alerty, snackbary a animaci nehody
+- ulozeni stavu
+- validace vstupu
+- responzivni layout
+- vicejazycnost
+
+## Poznamka k rozsahu
+Data jsou mockovana a ulozena jen lokalne. To je v souladu se zadanim, ktere nevyzaduje databazi ani server. Dulezitejsi casti projektu jsou navrh GUI, synchronizace komponent a obhajitelna struktura kodu.
+
+## Dokumentace ke kriteriim
+Podrobna mapa splnenych kriterii, odkazy do kodu a self-evaluation jsou v souboru `docs/criteria-map.md`.

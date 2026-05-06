@@ -2,12 +2,13 @@ export const resources = {
   en: {
     translation: {
       app: {
-        title: 'Interactive Urban Transport Dispatcher',
-        subtitle: 'Schedule planning and live tram monitoring in one cockpit',
+        title: 'Interactive Tram Dispatcher',
+        subtitle: 'Route selection, trip editing, and live tram monitoring in one student project',
       },
       header: {
-        author: 'Author: Gr3dn Student',
+        author: 'Author: Hrechishkin | A23B0394P',
         language: 'Language',
+        routes: 'Routes',
         save: 'Save state',
         load: 'Load state',
         reset: 'Reset mock',
@@ -54,10 +55,11 @@ export const resources = {
         },
       },
       map: {
-        title: 'Route Timeline Map',
+        title: 'Live Route Map',
         clock: 'Simulation clock',
         stopHint: 'Stops',
-        noDirection: 'Select direction to render map',
+        noDirection: 'Select a direction to render the map.',
+        liveHint: 'Switch to Live monitoring mode to run the clock and moving tram markers.',
       },
       status: {
         onTime: 'On time',
@@ -80,9 +82,15 @@ export const resources = {
       about: {
         title: 'About This Application',
         description:
-          'Semester project focused on advanced GUI: synchronized Tree View, Data Grid, and custom timeline map.',
+          'Semester project focused on non-trivial GUI for tram dispatching with synchronized Tree View, Data Grid, and custom rendered route map.',
+        purpose:
+          'The application demonstrates the workflow route selection -> trip editing -> live overview -> save/load of work.',
         stack: 'Stack: React, TypeScript, MUI, CSS, LocalStorage, i18next.',
-        observer: 'Observer pattern is implemented through centralized reactive store.',
+        criteria:
+          'Implemented criteria: multi-view workflow, hierarchical navigation, editable table with validation, custom visualization, responsive layout, i18n, and observer-like state synchronization.',
+        authorLabel: 'Author',
+        personalNumberLabel: 'Personal number',
+        courseLabel: 'Semester project',
       },
       actions: {
         close: 'Close',
@@ -92,12 +100,13 @@ export const resources = {
   cs: {
     translation: {
       app: {
-        title: 'Interaktivni dispecer mestske dopravy',
-        subtitle: 'Planovani jizdnich radu a live monitoring tramvaji',
+        title: 'Interaktivni dispecer tramvajove dopravy',
+        subtitle: 'Vyber trasy, uprava spoju a live sledovani v jedne studentske aplikaci',
       },
       header: {
-        author: 'Autor: Gr3dn Student',
+        author: 'Autor: Hrechishkin | A23B0394P',
         language: 'Jazyk',
+        routes: 'Trasy',
         save: 'Ulozit stav',
         load: 'Nacist stav',
         reset: 'Obnovit mock data',
@@ -144,10 +153,11 @@ export const resources = {
         },
       },
       map: {
-        title: 'Mapa casove osy trasy',
+        title: 'Ziva mapa trasy',
         clock: 'Simulovany cas',
         stopHint: 'Zastavky',
-        noDirection: 'Vyberte smer pro vykresleni mapy',
+        noDirection: 'Vyberte smer pro vykresleni mapy.',
+        liveHint: 'Prepnite aplikaci do rezimu Live monitoring, aby bezel cas a pohyb tramvaji.',
       },
       status: {
         onTime: 'Vcas',
@@ -170,9 +180,15 @@ export const resources = {
       about: {
         title: 'O teto aplikaci',
         description:
-          'Semestralni projekt zamereny na pokrocile GUI: synchronizovany Tree View, Data Grid a vlastni casova mapa.',
+          'Semestralni projekt zamereny na netrivialni GUI pro tramvajoveho dispecera se synchronizovanym Tree View, Data Gridem a vlastni kreslenou mapou trasy.',
+        purpose:
+          'Aplikace demonstruje workflow vyber trasy -> uprava spoju -> live prehled -> ulozeni a nacteni rozpracovaneho stavu.',
         stack: 'Stack: React, TypeScript, MUI, CSS, LocalStorage, i18next.',
-        observer: 'Observer pattern je realizovan centralnim reaktivnim storem.',
+        criteria:
+          'Implementovana kriteria: vice pohledu, hierarchicka navigace, editovatelna tabulka s validaci, vlastni vizualizace, responzivni layout, i18n a observer-like synchronizace stavu.',
+        authorLabel: 'Autor',
+        personalNumberLabel: 'Osobni cislo',
+        courseLabel: 'Semestralni projekt',
       },
       actions: {
         close: 'Zavrit',

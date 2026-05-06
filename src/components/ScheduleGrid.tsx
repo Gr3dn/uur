@@ -11,8 +11,6 @@ import {
   Typography,
   type SelectChangeEvent,
 } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddAlarmIcon from '@mui/icons-material/AddAlarm';
@@ -513,16 +511,6 @@ export const ScheduleGrid = () => {
               <MenuItem value="planning">{t('modes.planning')}</MenuItem>
               <MenuItem value="live">{t('modes.live')}</MenuItem>
             </Select>
-            <Button
-              variant="contained"
-              size="small"
-              color={state.isPlaying ? 'secondary' : 'primary'}
-              startIcon={state.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-              onClick={actions.togglePlay}
-              disabled={state.mode !== 'live'}
-            >
-              {state.isPlaying ? t('grid.pause') : t('grid.play')}
-            </Button>
           </Stack>
         </Stack>
 

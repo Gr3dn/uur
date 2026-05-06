@@ -2,45 +2,167 @@
   overflow: hidden;
 }
 
-.timeline-map {
+.map-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.map-header-actions {
+  justify-content: flex-end;
+}
+
+.route-map-canvas {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  flex: 1;
+  border: 1px solid rgba(0, 77, 64, 0.14);
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(0, 121, 107, 0.16), transparent 40%),
+    radial-gradient(circle at 82% 84%, rgba(230, 81, 0, 0.12), transparent 38%),
+    linear-gradient(180deg, rgba(245, 252, 251, 0.98), rgba(255, 248, 241, 0.98));
+}
+
+.route-map-svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 240px;
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 14% 16%, rgba(0, 121, 107, 0.12), transparent 36%),
-    linear-gradient(180deg, rgba(245, 252, 251, 0.9), rgba(255, 247, 238, 0.9));
 }
 
-.stop-label {
-  font-size: 12px;
-  font-weight: 700;
-  fill: #123437;
+.route-map-polyline {
+  fill: none;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 3 2;
+  filter: drop-shadow(0 4px 10px rgba(16, 42, 45, 0.16));
 }
 
-.stop-sub-label {
+.route-map-stop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.route-map-stop-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 3px solid #00796b;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.78);
+}
+
+.route-map-stop-label,
+.route-map-stop-platform {
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 77, 64, 0.1);
+  color: #163336;
+  white-space: nowrap;
+}
+
+.route-map-stop-label {
   font-size: 11px;
-  fill: #4f7073;
-}
-
-.tram-label {
-  font-size: 12px;
   font-weight: 700;
-  fill: #143437;
 }
 
-.tram-accident circle {
-  animation: tram-alert 1s steps(2, end) infinite;
+.route-map-stop-platform {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #5c787a;
 }
 
-@keyframes tram-alert {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.2;
-  }
+.route-map-tram {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 0 5px 14px rgba(16, 42, 45, 0.22);
+  transition:
+    left 0.9s linear,
+    top 0.9s linear,
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.route-map-tram-icon,
+.route-map-tram-alert-icon {
+  font-size: 11px;
+}
+
+.route-map-tram-onTime {
+  background-color: #2e7d32;
+}
+
+.route-map-tram-delayed {
+  background-color: #f57c00;
+}
+
+.route-map-tram-cancelled {
+  background-color: #6d6d6d;
+}
+
+.route-map-tram-accident {
+  background-color: #d32f2f;
+  animation: route-map-accident-blink 0.85s steps(2, start) infinite;
+}
+
+.route-map-tram-label {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 5px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 77, 64, 0.12);
+  background: rgba(255, 255, 255, 0.96);
+  color: #102a2d;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@keyframes route-map-accident-blink {
+  0%,
   100% {
     opacity: 1;
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.55);
+  }
+
+  50% {
+    opacity: 0.2;
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.08);
+  }
+}
+
+@media (max-width: 900px) {
+  .route-map-canvas {
+    min-height: 300px;
+  }
+
+  .map-header-actions {
+    justify-content: flex-start;
+  }
+
+  .route-map-stop-label {
+    font-size: 10px;
   }
 }
