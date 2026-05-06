@@ -1,0 +1,55 @@
+.panel-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-shell {
+  flex: 1;
+  min-height: 280px;
+}
+
+.panel-grid .MuiDataGrid-root {
+  border-radius: 12px;
+  border-color: rgba(0, 77, 64, 0.16);
+  font-size: 0.92rem;
+}
+
+.panel-grid .MuiDataGrid-columnHeaders {
+  background: linear-gradient(90deg, rgba(0, 121, 107, 0.09), rgba(230, 81, 0, 0.06));
+}
+
+.panel-grid .MuiDataGrid-columnHeaderTitle {
+  white-space: normal;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.panel-grid .MuiDataGrid-cell {
+  align-items: center;
+}
+
+.panel-grid .MuiDataGrid-cell.notes-cell {
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.panel-grid .MuiDataGrid-actionsCell {
+  gap: 2px;
+}
+
+.panel-grid .row-status-onTime {
+  background: rgba(46, 125, 50, 0.05);
+}
+
+.panel-grid .row-status-delayed {
+  background: rgba(245, 124, 0, 0.06);
+}
+
+.panel-grid .row-status-cancelled {
+  background: rgba(117, 117, 117, 0.06);
+}
+
+.panel-grid .row-status-accident {
+  background: rgba(211, 47, 47, 0.08);
+}
